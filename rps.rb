@@ -1,5 +1,6 @@
 require 'rack/request'
 require 'rack/response'
+require 'haml'
   
   module RockPaperScissors
     class App 
@@ -22,7 +23,7 @@ require 'rack/response'
  
         computer_throw = @throws.sample
         player_throw = req.GET["choice"]
-        anwser = if !@throws.include?(player_throw)
+        answer = if !@throws.include?(player_throw)
             "Choose one of the following:"
           elsif player_throw == computer_throw
             "You tied with the computer"
@@ -31,19 +32,13 @@ require 'rack/response'
           else
             "Ouch; #{computer_throw} beats #{player_throw}. Better luck next time!"
           end
- 
+
+        engine = Haml::Engine.new File.open("views/index.haml").read 
         res = Rack::Response.new
-        res.write <<-"EOS"
-        <html>
-          <title>rps</title>
-          <body>
-            <h1>
-               #{anwser}
-               #{@choose}
-            </h1>
-          </body>
-        </html>
-        EOS
+        res.write engine.render({}, 
+          :answer => answer, 
+          :choose => @choose,
+          :throws => @throws)
         res.finish
       end # call
     end   # App
@@ -51,11 +46,8 @@ require 'rack/response'
   
   if $0 == __FILE__
     require 'rack'
-    require 'rack/showexceptions'
     Rack::Server.start(
-      :app => Rack::ShowExceptions.new(
-                Rack::Lint.new(
-                  RockPaperScissors::App.new)), 
+      :app => RockPaperScissors::App.new, 
       :Port => 9292,
       :server => 'thin'
     )
