@@ -11,9 +11,9 @@ module RockPaperScissors
       @defeat = {'rock' => 'scissors', 'paper' => 'rock', 'scissors' => 'paper'}
       @throws = @defeat.keys
       @choose = @throws.map { |x| 
-           %Q{ <li><a href="/?choice=#{x}">#{x}</a></li> }
+           %Q{    <li><a href="/?choice=#{x}">#{x}</a></li> }
         }.join("\n")
-      @choose = "<p>\n<ul>\n#{@choose}\n</ul>"
+      @choose = "<p>\n  <ul>\n#{@choose}\n  </ul>\n</p>"
     end
   
     def call(env)
@@ -26,14 +26,14 @@ module RockPaperScissors
       answer = if !@throws.include?(player_throw)
           ""
         elsif player_throw == computer_throw
-          "<b>Result:</b> You tied with the computer"
+          "\n<b>Result:</b> You tied with the computer"
         elsif computer_throw == @defeat[player_throw]
-          "<b>Result:</b> Nicely done; #{player_throw} beats #{computer_throw}"
+          "\n<b>Result:</b> Nicely done; #{player_throw} beats #{computer_throw}"
         else
-          "<b>Result:</b> Ouch; #{computer_throw} beats #{player_throw}. Better luck next time!"
+          "\n<b>Result:</b> Ouch; #{computer_throw} beats #{player_throw}. Better luck next time!"
         end
       if !answer.empty?
-        answer.insert(0, "<b>Your choice:</b> #{player_throw}, <b>Computer choice:</b> #{computer_throw}, ")
+        answer.insert(0, "<b>Your choice:</b> #{player_throw}, \n<b>Computer choice:</b> #{computer_throw}, ")
       end
       engine = Haml::Engine.new File.open("views/index.haml").read 
       res = Rack::Response.new
