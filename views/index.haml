@@ -1,8 +1,10 @@
 !!!
 %html
   %head
-    %title RPS con Haml
+    %title RPS with Haml
   %body
-    %h1 Bienvenido a Rock, Paper, Scissors con Haml
-    %p= answer
-    %p= choose
+    %h1 Welcome to Rock, Paper, Scissors with Haml
+    %p
+      To start playing clasical Rock, Paper, Scissors game choose a throw:
+      = choose
+    %p= answer.gsub(',', '<br>')
